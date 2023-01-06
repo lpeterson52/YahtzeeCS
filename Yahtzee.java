@@ -3,7 +3,7 @@ import java.util.ArrayList;
 
 import java.util.*;
 public class Yahtzee {
-  public int rollsLeft = 4;
+  public int rollsLeft = 3;
   public int lives = 2;
   private int Dice1 = 0; 
   private int Dice2 = 0;
@@ -38,7 +38,7 @@ public class Yahtzee {
 
 
   ArrayList<Integer> diceRolls = new ArrayList<>();
-
+  ArrayList<Integer> displayDiceRolls = new ArrayList<>();
 
 
 
@@ -57,7 +57,13 @@ public class Yahtzee {
           diceRolls.remove(0);
 
       }
-
+      if(displayDiceRolls.size()==5){
+        displayDiceRolls.remove(4);
+        displayDiceRolls.remove(3);
+        displayDiceRolls.remove(2);
+        displayDiceRolls.remove(1);
+        displayDiceRolls.remove(0);
+      }
         Dice1 = (int)(Math.random()*6)+1; 
       
         Dice2 = (int)(Math.random()*6)+1;
@@ -70,33 +76,43 @@ public class Yahtzee {
 
         if(tempDice1 != 0){
           diceRolls.add(tempDice1);
+          displayDiceRolls.add(tempDice1);
         }
         else{
           diceRolls.add(Dice1);
+          displayDiceRolls.add(Dice1);
         }
         if(tempDice2 != 0){
           diceRolls.add(tempDice2);
+          displayDiceRolls.add(tempDice2);
         }
         else{
           diceRolls.add(Dice2);
+          displayDiceRolls.add(Dice2);
         }
         if(tempDice3 != 0){
           diceRolls.add(tempDice3);
+          displayDiceRolls.add(tempDice3);
         }
         else{
           diceRolls.add(Dice3);
+          displayDiceRolls.add(Dice3);
         }
         if(tempDice4 != 0){
           diceRolls.add(tempDice4);
+          displayDiceRolls.add(tempDice4);
         }
         else{
           diceRolls.add(Dice4);
+          displayDiceRolls.add(Dice4);
         }
         if(tempDice5 != 0){
           diceRolls.add(tempDice5);
+          displayDiceRolls.add(tempDice5);
         }
         else{
           diceRolls.add(Dice5);
+          displayDiceRolls.add(Dice5);
         }
         rollsLeft--;
   }
@@ -109,11 +125,10 @@ public class Yahtzee {
   }
 
   public void printRolls(){
-    Collections.sort(diceRolls);
     String x = "";
     
-    for(int i = 0; i < diceRolls.size(); i++){
-      x += diceRolls.get(i)  + " ";
+    for(int i = 0; i < displayDiceRolls.size(); i++){
+      x += displayDiceRolls.get(i)  + " ";
     }
     System.out.println(x);
   }
@@ -127,20 +142,23 @@ public class Yahtzee {
     diceRolls.add(Dice5);
     diceRolls.add(Dice5);
     diceRolls.add(Dice5);
-    
+    roll();
     printClaimInstructions();
+    printRolls();
+    keepDice();
      while (rollsLeft > -1){
       // if (!(rollsLeft <= -1)){
       //   lives--;
       // }
-    roll();
-    printRolls();
-    keepDice();
     askPlayer();
-    
+    if(rollsLeft < 0 && chanceClaimed == false){
+      claimChance();
+      }
+  
     }
     
     System.out.println("game over, out of rolls");
+    System.out.println("Your score was " + totalScore);
     }
   
 //(claimable() == false) || 
@@ -163,7 +181,7 @@ public class Yahtzee {
     System.out.println("Enter s to claim Small Straight");
     System.out.println("Enter l to claim Large Straight");
     System.out.println("Enter f to claim Full House");
-    
+    System.out.println("Enter c to claim Chance");
   }
   //asks the player what dice they want to keep
   public void keepDice(){
@@ -250,18 +268,25 @@ public class Yahtzee {
   
   public void askPlayer(){
     Console console = System.console();
-    String inputString = console.readLine("Enter 1 to roll Enter 0 to claim categories");
-    if(rollsLeft == 0){
-      System.out.println("You are out of rolls");
+    System.out.println("You have " + rollsLeft + " rolls left");
+    if(rollsLeft==0){
+      System.out.println("You are out of rolls, claim categories");
     }
+    String inputString = console.readLine("Enter 1 to Roll, Enter 0 to claim categories: ");
     if (inputString.equals("1")){
       Collections.sort(diceRolls);
       roll();
+      printRolls();
+      keepDice();
     }
-    if (inputString.equals("0")){
+    else if (inputString.equals("0")){
       askClaims();
     }
+    else{
+      System.out.println("Invalid input");
+      askPlayer();
   } 
+}
   public int Twoofakindint(){
     int x = 0;
     Collections.sort(diceRolls);
@@ -295,7 +320,7 @@ public int Threeofakindint(){
         }
       x++;
         }     
-  return 00 ;
+  return 0 ;
 }
   
   public boolean Threeofakind(){
@@ -317,7 +342,7 @@ public int Threeofakindint(){
       x += diceRolls.get(i);
     }
     totalScore += x;
-    rollsLeft = 4;
+    3;
     threeOfAKindClaimed = true;
     resetDice();
   }
@@ -343,7 +368,7 @@ public boolean Fourofakind(){
               x += diceRolls.get(i);
             }
             totalScore += x;
-            rollsLeft = 4;
+            rollsLeft = 3;
             fourOfAKindClaimed = true;
             resetDice();
           }
@@ -364,7 +389,7 @@ public boolean yahtzee(){
 public void claimYahtzee(){
   yahtzeeClaimed =  true;
   totalScore += 50;
-  rollsLeft = 4;
+  rollsLeft = 3;
   resetDice();
 }
 
@@ -413,7 +438,7 @@ public void claimSmallStraight(){
 public void claimLargeStraight(){
   largeStraightClaimed = true;
   totalScore += 40;
-  rollsLeft = 4;
+  rollsLeft = 3;
   resetDice();
 }
 public void printScore(){
@@ -439,7 +464,7 @@ public void claimOnes(){
   }
   onesClaimed = true;
   totalScore += x;
-  rollsLeft = 4;
+  rollsLeft = 3;
   resetDice();
 }
 
@@ -462,7 +487,7 @@ public void claimTwos(){
   }
   twosClaimed = true;
   totalScore += x;
-  rollsLeft = 4;
+  rollsLeft = 3;
   resetDice();
 }
 
@@ -477,7 +502,7 @@ public void ClaimThrees(){
   }
   threesClaimed = true;
   totalScore += x;
-  rollsLeft = 4;
+  rollsLeft = 3;
   resetDice();
 }
 
@@ -502,7 +527,7 @@ public void claimFours(){
   }
   foursClaimed = true;
   totalScore += x;
-  rollsLeft = 4;
+  rollsLeft = 3;
   resetDice();
 }
 public boolean Fours(){
@@ -528,7 +553,7 @@ public boolean Fives(){
 }
 
 public void claimFives(){
-  int x = -5;
+  int x = 0;
   for(int i = 0; i < diceRolls.size(); i++){
     if(diceRolls.get(i) == 5){
       x+=5;
@@ -537,7 +562,7 @@ public void claimFives(){
   }
   fivesClaimed = true;
   totalScore += x;
-  rollsLeft = 4;
+  rollsLeft = 3;
   resetDice();
 }
 
@@ -552,7 +577,7 @@ public boolean Six(){
 }
 
 public void claimSixes(){
-  int x = -6;
+  int x = 0;
   for(int i = 0; i < diceRolls.size(); i++){
     if(diceRolls.get(i) == 6){
       x+=6;
@@ -561,8 +586,18 @@ public void claimSixes(){
    
   sixesClaimed = true;
   totalScore += x;
-  rollsLeft = 4;
+  rollsLeft = 3;
   resetDice();
+}
+
+public void claimChance(){
+  int x = 0;
+  for(int i = 0; i < diceRolls.size(); i++){
+    x += diceRolls.get(i);
+  }
+  totalScore += x;
+  rollsLeft = 3;
+  chanceClaimed = true;
 }
 public void askClaims(){
   Console console = System.console();
@@ -725,7 +760,7 @@ public void askClaims(){
       }
       else{
         claimLargeStraight();
-        rollsLeft = 4;
+        rollsLeft = 3;
       }
     }
     else{
@@ -751,8 +786,17 @@ public void askClaims(){
       askClaims();
     }
   }
+  else if(inputString.equals("c")){
+    if(chanceClaimed){
+      System.out.println("You have already claimed Chance");
+      askClaims();
+    }
+    else{
+      claimChance();
+    }
+  }
   printScore();
-  rollsLeft = 4;
-  System.out.println(rollsLeft);
+  rollsLeft = 3;
 }
+
 }
