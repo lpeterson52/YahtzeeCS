@@ -342,7 +342,6 @@ public int Threeofakindint(){
       x += diceRolls.get(i);
     }
     totalScore += x;
-    3;
     threeOfAKindClaimed = true;
     resetDice();
   }
