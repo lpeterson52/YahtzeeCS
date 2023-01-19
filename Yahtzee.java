@@ -4,7 +4,7 @@ import java.util.Comparator;
 import java.util.*;
 
 public class Yahtzee {
-  public int rollsLeft = 4;
+  public int rollsLeft = 3;
   public int lives = 2;
   private int tempDice1 = 0;
   private int tempDice2 = 0;
@@ -12,11 +12,6 @@ public class Yahtzee {
   private int tempDice4 = 0;
   private int tempDice5 = 0;
   // whether to roll dice or not(keep or not)
-  private boolean rollDice1 = true;
-  private boolean rollDice2 = true;
-  private boolean rollDice3 = true;
-  private boolean rollDice4 = true;
-  private boolean rollDice5 = true;
   // what categories have been claimed
   private boolean onesClaimed = false;
   private boolean twosClaimed = false;
@@ -36,10 +31,18 @@ public class Yahtzee {
 
   ArrayList<Die> diceRolls = new ArrayList<Die>();
 
-
-  public void resetKeeps(){
+  public void resetKeeps() {
     for (int i = 0; i < diceRolls.size(); i++) {
       diceRolls.get(i).setKeep(false);
+    }
+  }
+
+  // roll method
+  public void roll() {
+    for (int i = 0; i < diceRolls.size(); i++) {
+      if (diceRolls.get(i).getKeep() != true) {
+        diceRolls.get(i).roll();
+      }
     }
   }
 
@@ -57,30 +60,21 @@ public class Yahtzee {
     }
 
   }
-  //test
-  public void printTempDice() {
-    System.out.println(tempDice1);
-    System.out.println(tempDice2);
-    System.out.println(tempDice3);
-    System.out.println(tempDice4);
-    System.out.println(tempDice5);
-  }
-  //prints out the rolls
   public void printRolls() {
-    Collections.sort(diceRolls, Comparator.comparing(Die::getValue));
     String x = "";
-
+    Collections.sort(diceRolls, Comparator.comparing(Die::getValue));
     for (int i = 0; i < diceRolls.size(); i++) {
       x += diceRolls.get(i).getValue() + " ";
     }
     System.out.println(x);
   }
-  //runs the game
+
   public void runGame() {
+    roll();
     addDice();
     printClaimInstructions();
     while (rollsLeft > -1) {
-      rollDice();
+      roll();
       printRolls();
       keepDice();
       askPlayer();
@@ -88,6 +82,7 @@ public class Yahtzee {
 
     System.out.println("game over, out of rolls");
   }
+
   public boolean claimable() {
     Collections.sort(diceRolls, Comparator.comparing(Die::getValue));
     if (((threeOfAKindClaimed == false) && (Threeofakind() == true))
@@ -100,7 +95,8 @@ public class Yahtzee {
       return false;
     }
   }
-  //prints out the instructions to claim certain categories
+
+  // prints out the instructions to claim certain categories
   public void printClaimInstructions() {
     System.out.println("Enter a number 1-6 to claim Numbers");
     System.out.println("Enter 7 to claim Three of a Kind");
@@ -127,15 +123,15 @@ public class Yahtzee {
       for (int y = 0; y < diceRolls.size(); y++) {
         if (diceRolls.get(y).getKeep()) {
           x += diceRolls.get(y).getValue() + " ";
-        }
-        else{
+        } else {
           x += "_ ";
         }
       }
       System.out.println("The dice you want to keep: " + x);
     }
   }
-  //asks player whether they want to roll or claim categories
+
+  // asks player whether they want to roll or claim categories
   public void askPlayer() {
     Console console = System.console();
     String inputString = console.readLine("Enter 1 to roll Enter 0 to claim categories: ");
@@ -150,12 +146,14 @@ public class Yahtzee {
       askClaims();
     }
   }
-//checks whether there is a three of a kind
+
+  // checks whether there is a three of a kind
   public boolean Threeofakind() {
     int x = 0;
     Collections.sort(diceRolls, Comparator.comparing(Die::getValue));
     while (x < 3) {
-      if ((diceRolls.get(x).getValue() == diceRolls.get(x + 1).getValue()) && (diceRolls.get(x).getValue() == diceRolls.get(x + 2).getValue())) {
+      if ((diceRolls.get(x).getValue() == diceRolls.get(x + 1).getValue())
+          && (diceRolls.get(x).getValue() == diceRolls.get(x + 2).getValue())) {
         return true;
       }
       x++;
@@ -163,23 +161,25 @@ public class Yahtzee {
     return false;
 
   }
-//claims three of a kind
+
+  // claims three of a kind
   public void claimThreeOfAKind() {
     int x = 0;
     for (int i = 0; i < diceRolls.size(); i++) {
       Collections.sort(diceRolls, Comparator.comparing(Die::getValue));
     }
     totalScore += x;
-    rollsLeft = 4;
     threeOfAKindClaimed = true;
     rollDice();
   }
-//checks if there is a four of a kind
+
+  // checks if there is a four of a kind
   public boolean Fourofakind() {
     int x = 0;
     Collections.sort(diceRolls, Comparator.comparing(Die::getValue));
     while (x != diceRolls.size() - 4) {
-      if ((diceRolls.get(x).getValue() == diceRolls.get(x + 1).getValue()) && (diceRolls.get(x).getValue() == diceRolls.get(x + 2).getValue())
+      if ((diceRolls.get(x).getValue() == diceRolls.get(x + 1).getValue())
+          && (diceRolls.get(x).getValue() == diceRolls.get(x + 2).getValue())
           && (diceRolls.get(x).getValue() == diceRolls.get(x + 3).getValue())) {
         return true;
       }
@@ -189,7 +189,8 @@ public class Yahtzee {
     return false;
 
   }
-//claims four of a kind
+
+  // claims four of a kind
   public void claimFourOfAKind() {
     int x = 0;
     for (int i = 0; i < diceRolls.size(); i++) {
@@ -200,39 +201,49 @@ public class Yahtzee {
     fourOfAKindClaimed = true;
     rollDice();
   }
-//checks if there is a yahtzee
+
+  // checks if there is a yahtzee
   public boolean yahtzee() {
 
     Collections.sort(diceRolls, Comparator.comparing(Die::getValue));
 
-    if ((diceRolls.get(0).getValue() == diceRolls.get(0 + 1).getValue()) && (diceRolls.get(0).getValue() == diceRolls.get(0 + 2).getValue())
-        && (diceRolls.get(0).getValue() == diceRolls.get(3).getValue()) && diceRolls.get(0).getValue() == diceRolls.get(4).getValue()) {
+    if ((diceRolls.get(0).getValue() == diceRolls.get(0 + 1).getValue())
+        && (diceRolls.get(0).getValue() == diceRolls.get(0 + 2).getValue())
+        && (diceRolls.get(0).getValue() == diceRolls.get(3).getValue())
+        && diceRolls.get(0).getValue() == diceRolls.get(4).getValue()) {
       return true;
     }
 
     return false;
 
   }
-//claims the yahtzee
+
+  // claims the yahtzee
   public void claimYahtzee() {
     yahtzeeClaimed = true;
     totalScore += 50;
     rollsLeft = 4;
     rollDice();
   }
-//checks if there is a full house
+
+  // checks if there is a full house
   public boolean FullHouse() {
     Collections.sort(diceRolls, Comparator.comparing(Die::getValue));
 
-    if ((diceRolls.get(0).getValue() == diceRolls.get(1).getValue()) && (diceRolls.get(0).getValue() == diceRolls.get(2).getValue())
-        && (diceRolls.get(3).getValue() == diceRolls.get(4).getValue()) && (diceRolls.get(2).getValue() != diceRolls.get(3).getValue())
-        || (diceRolls.get(0).getValue() == diceRolls.get(1).getValue()) && (diceRolls.get(2).getValue() == diceRolls.get(3).getValue())
-            && (diceRolls.get(3).getValue() == diceRolls.get(4).getValue()) && (diceRolls.get(0).getValue() != diceRolls.get(4).getValue())) {
+    if ((diceRolls.get(0).getValue() == diceRolls.get(1).getValue())
+        && (diceRolls.get(0).getValue() == diceRolls.get(2).getValue())
+        && (diceRolls.get(3).getValue() == diceRolls.get(4).getValue())
+        && (diceRolls.get(2).getValue() != diceRolls.get(3).getValue())
+        || (diceRolls.get(0).getValue() == diceRolls.get(1).getValue())
+            && (diceRolls.get(2).getValue() == diceRolls.get(3).getValue())
+            && (diceRolls.get(3).getValue() == diceRolls.get(4).getValue())
+            && (diceRolls.get(0).getValue() != diceRolls.get(4).getValue())) {
       return true;
     }
     return false;
   }
-//checks if there is a large straight
+
+  // checks if there is a large straight
   public boolean Largestraight() {
     Collections.sort(diceRolls, Comparator.comparing(Die::getValue));
     int x = 0;
